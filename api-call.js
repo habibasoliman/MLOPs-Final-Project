@@ -1,12 +1,26 @@
 async function getPredictedLabel(processed_t) {
-  // TODO: Call your model's api here
-  // and return the predicted label
-  // Possible labels: "up", "down", "left", "right", null
-  // null means stop & wait for the next gesture
-  // For now, we will return a random label
-  const labels = ["up", "down", "left", "right"];
-  const randomIndex = Math.floor(Math.random() * labels.length);
-  const randomLabel = labels[randomIndex];
-  console.log("Predicted label:", randomLabel);
-  return randomLabel;
+  try {
+    // Send POST request to your deployed backend API
+    const response = await fetch("https://mlops-handgesture-api-production.up.railway.app/predict", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ landmarks: processed_t })
+    });
+
+    if (!response.ok) {
+      console.error("API request failed:", response.statusText);
+      return null;
+    }
+
+    const data = await response.json();
+    console.log("Predicted label from API:", data.gesture);
+
+    // Return the gesture predicted by the backend
+    return data.gesture || null;
+  } catch (error) {
+    console.error("Error calling prediction API:", error);
+    return null;
+  }
 }

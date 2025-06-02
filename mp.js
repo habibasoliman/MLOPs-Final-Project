@@ -23,7 +23,12 @@ async function onResults(results) {
         color: "#FF0000",
         lineWidth: 2,
       });
-      const arrow = await getPredictedLabel(landmarks);
+
+      // Convert landmarks objects to array of [x, y, z]
+      const processedLandmarks = landmarks.map(lm => [lm.x, lm.y, lm.z]);
+      const arrow = await getPredictedLabel(processedLandmarks);
+
+      //const arrow = await getPredictedLabel(landmarks);
       if (arrow) {
         triggerArrowKey("keydown", arrow);
         setTimeout(() => {
